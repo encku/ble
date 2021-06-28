@@ -23,7 +23,6 @@ func (c *conn) ChangeMTUSize(mtu int)  {
 	c.SetTxMTU(txMTU)
 
 	if txMTU != len(c.svr.txBuf) {
-		fmt.Println("MTU CHANGE TEST !")
 		// Apply the txMTU afer this response has been sent and before
 		// any other attribute protocol PDU is sent.
 		defer func() {
@@ -33,7 +32,6 @@ func (c *conn) ChangeMTUSize(mtu int)  {
 			<-c.svr.chIndBuf
 			c.svr.chIndBuf <- make([]byte, txMTU, txMTU)
 		}()
-		fmt.Println("MTU CHANGE TEST ! done")
 	}
 }
 
@@ -75,8 +73,8 @@ func NewServer(db *DB, l2c ble.Conn) (*Server, error) {
 		},
 		db: db,
 
-		rxMTU:     ble.DefaultMTUForBuffer,
-		txBuf:     make([]byte, ble.DefaultMTUForBuffer, ble.DefaultMTUForBuffer),
+		rxMTU:     mtu,
+		txBuf:     make([]byte, ble.DefaultMTU, ble.DefaultMTU),
 		chNotBuf:  make(chan []byte, 1),
 		chIndBuf:  make(chan []byte, 1),
 		chConfirm: make(chan bool),
@@ -84,8 +82,8 @@ func NewServer(db *DB, l2c ble.Conn) (*Server, error) {
 		dummyRspWriter: ble.NewResponseWriter(nil),
 	}
 	s.conn.svr = s
-	s.chNotBuf <- make([]byte, ble.DefaultMTUForBuffer, ble.DefaultMTUForBuffer)
-	s.chIndBuf <- make([]byte, ble.DefaultMTUForBuffer, ble.DefaultMTUForBuffer)
+	s.chNotBuf <- make([]byte, ble.DefaultMTU, ble.DefaultMTU)
+	s.chIndBuf <- make([]byte, ble.DefaultMTU, ble.DefaultMTU)
 	return s, nil
 }
 
@@ -420,6 +418,8 @@ func (s *Server) handleReadRequest(r ReadRequest) []byte {
 	case len(r) != 3:
 		return newErrorResponse(r.AttributeOpcode(), 0x0000, ble.ErrInvalidPDU)
 	}
+
+	s.conn.ChangeMTUSize(150)
 
 	rsp := ReadResponse(s.txBuf)
 	rsp.SetAttributeOpcode()

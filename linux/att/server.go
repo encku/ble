@@ -18,6 +18,25 @@ type conn struct {
 	in   map[uint16]ble.Notifier
 }
 
+func (c *conn) ChangeMTUSize(mtu int)  {
+	txMTU := mtu
+	c.SetTxMTU(txMTU)
+
+	if txMTU != len(c.svr.txBuf) {
+		fmt.Println("MTU CHANGE TEST !")
+		// Apply the txMTU afer this response has been sent and before
+		// any other attribute protocol PDU is sent.
+		defer func() {
+			c.svr.txBuf = make([]byte, txMTU, txMTU)
+			<-c.svr.chNotBuf
+			c.svr.chNotBuf <- make([]byte, txMTU, txMTU)
+			<-c.svr.chIndBuf
+			c.svr.chIndBuf <- make([]byte, txMTU, txMTU)
+		}()
+		fmt.Println("MTU CHANGE TEST ! done")
+	}
+}
+
 // Server implements an ATT (Attribute Protocol) server.
 type Server struct {
 	conn *conn

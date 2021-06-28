@@ -18,7 +18,7 @@ type conn struct {
 	in   map[uint16]ble.Notifier
 }
 
-func (c *conn) ChangeMTUSize(mtu int)  {
+func (c *conn) ChangeMTUSize(mtu int) ExchangeMTUResponse {
 	txMTU := mtu
 	c.SetTxMTU(txMTU)
 
@@ -33,6 +33,11 @@ func (c *conn) ChangeMTUSize(mtu int)  {
 			c.svr.chIndBuf <- make([]byte, txMTU, txMTU)
 		}()
 	}
+
+	rsp := ExchangeMTUResponse(c.svr.txBuf)
+	rsp.SetAttributeOpcode()
+	rsp.SetServerRxMTU(uint16(c.svr.rxMTU))
+	return rsp[:3]
 }
 
 // Server implements an ATT (Attribute Protocol) server.

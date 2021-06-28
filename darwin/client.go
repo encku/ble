@@ -3,7 +3,7 @@ package darwin
 import (
 	"fmt"
 
-	"github.com/go-ble/ble"
+	"github.com/encku/ble"
 	"github.com/JuulLabs-OSS/cbgo"
 )
 

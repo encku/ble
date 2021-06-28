@@ -3,7 +3,7 @@ package main
 import (
 	"strings"
 
-	"github.com/go-ble/ble"
+	"github.com/encku/ble"
 	"github.com/urfave/cli"
 )
 

@@ -1,7 +1,9 @@
 package ble
 
 // DefaultMTU defines the default MTU of ATT protocol including 3 bytes of ATT header.
-var DefaultMTU = 23
+const DefaultMTU = 23
+
+const DefaultMTUForBuffer = 150
 
 // MaxMTU is maximum of ATT_MTU, which is 512 bytes of value length, plus 3 bytes of ATT header.
 // The maximum length of an attribute value shall be 512 octets [Vol 3, Part F, 3.2.9]

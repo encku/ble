@@ -76,7 +76,7 @@ func NewServer(db *DB, l2c ble.Conn) (*Server, error) {
 		db: db,
 
 		rxMTU:     mtu,
-		txBuf:     make([]byte, ble.DefaultMTU, ble.DefaultMTU),
+		txBuf:     make([]byte, ble.DefaultMTUForBuffer, ble.DefaultMTUForBuffer),
 		chNotBuf:  make(chan []byte, 1),
 		chIndBuf:  make(chan []byte, 1),
 		chConfirm: make(chan bool),
@@ -84,8 +84,8 @@ func NewServer(db *DB, l2c ble.Conn) (*Server, error) {
 		dummyRspWriter: ble.NewResponseWriter(nil),
 	}
 	s.conn.svr = s
-	s.chNotBuf <- make([]byte, ble.DefaultMTU, ble.DefaultMTU)
-	s.chIndBuf <- make([]byte, ble.DefaultMTU, ble.DefaultMTU)
+	s.chNotBuf <- make([]byte, ble.DefaultMTUForBuffer, ble.DefaultMTUForBuffer)
+	s.chIndBuf <- make([]byte, ble.DefaultMTUForBuffer, ble.DefaultMTUForBuffer)
 	return s, nil
 }
 

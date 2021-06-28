@@ -75,7 +75,7 @@ func NewServer(db *DB, l2c ble.Conn) (*Server, error) {
 		},
 		db: db,
 
-		rxMTU:     mtu,
+		rxMTU:     ble.DefaultMTUForBuffer,
 		txBuf:     make([]byte, ble.DefaultMTUForBuffer, ble.DefaultMTUForBuffer),
 		chNotBuf:  make(chan []byte, 1),
 		chIndBuf:  make(chan []byte, 1),
